@@ -1,0 +1,57 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class DogController : MonoBehaviour
+{
+    private Rigidbody2D rd2D;
+    private int scorevalue = 0;
+    public float speed;
+    public Text Score;
+    public Text winText;
+    public Text Lives;
+    Animator anim;
+    // Start is called before the first frame update
+    void Start()
+    {
+        rd2D = GetComponent<Rigidbody2D>();
+        Score.text = scorevalue.ToString();
+        anim = GetComponent<Animator>();
+        winText.text = "";
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        float hozMovement = Input.GetAxis("Horizontal");
+        float verMovement = Input.GetAxis("Vertical");
+
+        rd2D.AddForce(new Vector2(hozMovement * speed, verMovement * speed));
+    }
+    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.collider.tag == "coin")
+        {
+            scorevalue += 1;
+            Score.text = scorevalue.ToString();
+            Destroy(collision.collider.gameObject);
+            if (scorevalue >= 4)
+            {
+                winText.text = "You Win! Game Created by Matthew Montefusco";
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if(collision.collider.tag == "Ground")
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                rd2D.AddForce(new Vector2(0, 3), ForceMode2D.Impulse);
+            }
+        }
+    }
+}
